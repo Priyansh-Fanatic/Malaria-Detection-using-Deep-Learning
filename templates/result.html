@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <h1>Prediction Result</h1>
+        <p class="result">{{ label }}</p>
+        <p class="confidence">Confidence: {{ confidence }}</p>
+        <a class="link" href="{{ url_for('index') }}">Try another image</a>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+*.log
+.DS_Store
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.rar
+archive.*
+kaggle.json
+
+# Data and models
+data/
+models/
+reports/
+uploads/

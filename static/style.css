@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Space+Grotesk:wght@400;600&display=swap");
+
+:root {
+  --bg: #0f172a;
+  --bg-accent: #fef3c7;
+  --card: #ffffff;
+  --text: #0f172a;
+  --accent: #f97316;
+  --accent-2: #0ea5a4;
+  --error: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: "Space Grotesk", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% 20%, #fde68a 0%, transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, #99f6e4 0%, transparent 60%),
+    linear-gradient(120deg, #f1f5f9, #fff7ed);
+  min-height: 100vh;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: var(--card);
+  padding: 36px;
+  border-radius: 20px;
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.18);
+  max-width: 520px;
+  width: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+h1 {
+  margin-top: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 32px;
+  letter-spacing: 0.3px;
+}
+
+p {
+  margin: 12px 0 20px 0;
+  color: #334155;
+}
+
+input[type="file"] {
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+button {
+  background: linear-gradient(135deg, var(--accent), #fb923c);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 10px 20px rgba(249, 115, 22, 0.25);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.error {
+  color: var(--error);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.result {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent-2);
+}
+
+.confidence {
+  font-size: 18px;
+}
+
+.link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
