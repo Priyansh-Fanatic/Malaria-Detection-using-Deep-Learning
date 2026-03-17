@@ -8,12 +8,47 @@ from PIL import Image
 import seaborn as sns
 
 
+TARGET_CLASSES = ["Parasitized", "Uninfected"]
+
+
+def resolve_dataset_root(data_dir: Path) -> Path:
+    expected = {"parasitized", "uninfected"}
+
+    def child_dirs(path: Path):
+        return {p.name.lower() for p in path.iterdir() if p.is_dir()}
+
+    try:
+        root_children = child_dirs(data_dir)
+        if root_children == expected:
+            return data_dir
+    except FileNotFoundError:
+        pass
+
+    best = None
+    for candidate in data_dir.rglob("*"):
+        if not candidate.is_dir():
+            continue
+        candidate_children = child_dirs(candidate)
+        if candidate_children == expected:
+            best = candidate
+            break
+
+    if best is not None:
+        return best
+
+    raise ValueError(
+        f"Could not find dataset root with exactly Parasitized and Uninfected under: {data_dir}"
+    )
+
+
 def collect_image_stats(data_dir: Path) -> pd.DataFrame:
+    data_root = resolve_dataset_root(data_dir)
     records = []
-    for label_dir in sorted(data_dir.iterdir()):
+    for label_name in TARGET_CLASSES:
+        label_dir = data_root / label_name
         if not label_dir.is_dir():
             continue
-        label = label_dir.name
+        label = label_name
         for img_path in label_dir.glob("*.png"):
             try:
                 with Image.open(img_path) as img:

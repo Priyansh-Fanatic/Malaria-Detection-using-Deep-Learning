@@ -1,61 +1,102 @@
 # Malaria Detection using Deep Learning
 
-This project trains a MobileNetV2 model to classify malaria blood smear images as Parasitized or Uninfected and serves predictions via a Flask web app.
+Deep learning pipeline for malaria blood smear image classification with a Flask web app for demo predictions.
+
+The project trains and compares three models:
+- `CustomCNN`
+- `MobileNetV2`
+- `EfficientNetB0`
+
+Target classes:
+- `Parasitized`
+- `Uninfected`
 
 ## Dataset
-Download the dataset from Kaggle (do not upload dataset files/folders to GitHub):
+
+Download from Kaggle:
 
 https://www.kaggle.com/datasets/iarunava/cell-images-for-detecting-malaria
 
-After download and extraction, the dataset is expected at:
+Expected folder structure (auto-detected if there is an extra nested `cell_images` folder):
 
-```
+```text
 data/raw/cell_images/
   Parasitized/
   Uninfected/
 ```
 
-This matches the Kaggle malaria dataset structure.
+Important:
+- Keep `data/` local only.
+- Do not upload dataset files to GitHub.
 
-## Setup
+## Setup (Windows)
 
-```bash
+```powershell
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Data Exploration
+## Explore Dataset
 
-```bash
-python scripts/explore.py --data_dir data/raw/cell_images
+```powershell
+python scripts\explore.py --data_dir data/raw/cell_images
 ```
 
-This produces plots in `reports/`.
+Generates dataset visuals/statistics in `reports/`.
 
-## Training
+## Train Models
 
-```bash
-python scripts/train.py --data_dir data/raw/cell_images --epochs 15 --fine_tune_epochs 5
+Quick run (faster):
+
+```powershell
+python scripts\train.py --data_dir data/raw/cell_images --epochs 3
 ```
 
-The best model is saved to `models/best_model.keras`.
+Standard run:
 
-## Evaluation
-
-```bash
-python scripts/evaluate.py --data_dir data/raw/cell_images --model_path models/best_model.keras
+```powershell
+python scripts\train.py --data_dir data/raw/cell_images --epochs 5 --batch_size 32 --img_size 128 --learning_rate 0.001
 ```
 
-## Run the Web App
+Training behavior:
+- Uses stratified train/validation split (balanced classes).
+- Trains all three models sequentially.
+- Applies early stopping and restores best weights.
+- Saves best checkpoint per model in `models/`.
+- Copies overall winner to `models/best_model.keras` for app inference.
 
-```bash
+## Evaluate
+
+```powershell
+python scripts\evaluate.py --data_dir data/raw/cell_images --model_path models/best_model.keras
+```
+
+## Reports Generated
+
+During training, per model files are saved to `reports/`:
+- `*_history.png` (accuracy/loss curves)
+- `*_confusion_matrix.png`
+- `*_roc_curve.png` (when both classes are present)
+
+## Run Web App
+
+```powershell
 python app.py
 ```
 
-Open `http://127.0.0.1:5000` in your browser.
+Open in browser:
+
+http://127.0.0.1:5000
+
+Available endpoints:
+- `GET /` - upload UI
+- `POST /` - form upload prediction
+- `POST /predict` - JSON/file API
+- `GET /health` - service health
 
 ## Notes
-- Image augmentation is already applied in the dataset; on-the-fly augmentation is disabled by default in the training script.
-- Validation split is handled in `train.py` via `image_dataset_from_directory`.
-- Keep `data/` local only. Do not push dataset files to the repository.
+
+- If you stop training midway, restarting will retrain models from scratch unless you implement checkpoint resume logic.
+- TensorFlow warning `OUT_OF_RANGE: End of sequence` may appear after evaluation loops; this is typically informational for dataset iteration end.
+- `.gitignore` is configured to exclude virtual environments, datasets, models, reports, and uploads.

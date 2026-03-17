@@ -3,16 +3,69 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Result</title>
+    <title>HemoLens | Diagnostic Report</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
-  <body>
-    <main class="container">
-      <section class="card">
-        <h1>Prediction Result</h1>
-        <p class="result">{{ label }}</p>
-        <p class="confidence">Confidence: {{ confidence }}</p>
-        <a class="link" href="{{ url_for('index') }}">Try another image</a>
+  <body class="app-shell">
+    <div class="ambient-grid"></div>
+    <main class="page-wrap">
+      {% set numeric_confidence = confidence|replace('%', '')|float %}
+      {% set is_parasitized = label|lower == 'parasitized' %}
+
+      <section class="report card-surface">
+        <div class="report-head">
+          <h1>Diagnostic Report</h1>
+          <p>Automated image screening completed</p>
+        </div>
+
+        <div class="report-grid">
+          <article class="diagnosis-card {% if is_parasitized %}diagnosis-risk{% else %}diagnosis-safe{% endif %}">
+            <p class="badge">{{ 'Alert' if is_parasitized else 'Clear' }}</p>
+            <h2>{{ label|upper }}</h2>
+            <p class="diag-caption">
+              {{ 'Malaria parasites detected in sample.' if is_parasitized else 'No malaria parasites detected in sample.' }}
+            </p>
+          </article>
+
+          <aside class="detail-card">
+            <h3>Analysis Details</h3>
+            <div class="detail-row">
+              <span>Model</span>
+              <strong>best_model.keras</strong>
+            </div>
+            <div class="detail-row">
+              <span>Confidence</span>
+              <strong>{{ confidence }}</strong>
+            </div>
+            <div class="detail-row">
+              <span>Result Type</span>
+              <strong>{{ 'Parasitized' if is_parasitized else 'Uninfected' }}</strong>
+            </div>
+          </aside>
+        </div>
+
+        <section class="meter-card">
+          <div class="meter-head">
+            <h3>Confidence Level</h3>
+            <p>{{ confidence }}</p>
+          </div>
+          <div class="meter-track">
+            <div
+              class="meter-fill {% if is_parasitized %}meter-risk{% else %}meter-safe{% endif %}"
+              style="width: {{ numeric_confidence }}%;"
+            ></div>
+          </div>
+          <div class="meter-scale">
+            <span>Low</span>
+            <span>Medium</span>
+            <span>High</span>
+            <span>Very High</span>
+          </div>
+        </section>
+
+        <div class="report-actions">
+          <a class="ghost-btn" href="{{ url_for('index') }}">Analyze Another Sample</a>
+        </div>
       </section>
     </main>
   </body>
